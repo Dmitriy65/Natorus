@@ -10,7 +10,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-const db = mongoose
+mongoose
   .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
@@ -21,11 +21,12 @@ const db = mongoose
     console.log('DB connection successful 2!');
   });
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'));
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
+);
 
 const importData = async () => {
   try {
-    
     await Tour.create(tours);
     console.log('Data successfully loaded!');
     mongoose.connection.close();
