@@ -1,2 +1,2 @@
 # Natorus
-Using Express, MongoDB
+Using Express, Mongoose
