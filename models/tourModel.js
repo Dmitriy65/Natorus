@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const tourScheme = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'A tour field must have a name'],
     unique: true,
-    trim: true
+    trim: true,
+    maxlength: [40, 'less or equal to 40 symbols'],
+    minlength: [10, 'more or equal to 10 symbols']
   },
   duration: {
     type: Number,
@@ -17,11 +20,17 @@ const tourScheme = new mongoose.Schema({
   },
   difficulty: {
     type: String,
-    required: [true, 'A tour should have a difficulty']
+    required: [true, 'A tour should have a difficulty'],
+    enum: {
+      values: ['easy', 'medium', 'difficulty'],
+      message: 'can be easy or medium or difficulty'
+    }
   },
   rating: {
     type: Number,
-    default: 4.5
+    default: 4.5,
+    min: [1, 'rating should be above 1'],
+    max: [5, 'rating should be below 5']
   },
   ratingQuantity: {
     type: Number,
@@ -50,7 +59,13 @@ const tourScheme = new mongoose.Schema({
     type: Date,
     default: Date.now()
   },
-  startDates: [Date]
+  startDates: [Date],
+  slug: String
+});
+
+tourScheme.pre('save', function(next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
 });
 
 const Tour = mongoose.model('Tour', tourScheme);
