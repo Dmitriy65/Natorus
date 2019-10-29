@@ -15,6 +15,8 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
 app.use((err, req, res, next) => {
+  console.log(err);
+  
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
