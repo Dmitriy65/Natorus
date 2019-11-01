@@ -13,7 +13,8 @@ exports.signup = async (req, res, next) => {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm
+      passwordConfirm: req.body.passwordConfirm,
+      role: req.body.role
     });
 
     const token = signToken(newUser._id);
@@ -25,7 +26,6 @@ exports.signup = async (req, res, next) => {
         user: newUser
       }
     });
-
   } catch (err) {
     res.status(404).json({
       status: 'fail',
@@ -36,10 +36,10 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   console.log(req.body);
-  
+
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
       return next(new AppError(`Please provide password or email`, 400));
     }
@@ -97,4 +97,20 @@ exports.protect = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+exports.restrictTo = (...roles) => {
+  console.log(roles);
+  
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError(
+          'this user don`t have permission to perform this action',
+          403
+        )
+      );
+    }
+    next();
+  };
 };
